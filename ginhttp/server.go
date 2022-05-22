@@ -95,7 +95,7 @@ func Middleware(tr opentracing.Tracer, options ...MWOption) gin.HandlerFunc {
 		}
 		ext.Component.Set(sp, componentName)
 		c.Request = c.Request.WithContext(
-			opentracing.ContextWithSpan(c, sp))
+			opentracing.ContextWithSpan(c.Request.Context(), sp))
 
 		c.Next()
 

@@ -1,3 +1,4 @@
+//go:build go1.7
 // +build go1.7
 
 // This is the middleware from github.com/opentracing-contrib/go-stdlib
@@ -67,7 +68,7 @@ func MWURLTagFunc(f func(u *url.URL) string) MWOption {
 func Middleware(tr opentracing.Tracer, options ...MWOption) gin.HandlerFunc {
 	opts := mwOptions{
 		opNameFunc: func(r *http.Request) string {
-			return "HTTP " + r.Method
+			return r.Method + " " + r.URL.Path
 		},
 		spanObserver: func(span opentracing.Span, r *http.Request) {},
 		urlTagFunc: func(u *url.URL) string {
@@ -94,7 +95,7 @@ func Middleware(tr opentracing.Tracer, options ...MWOption) gin.HandlerFunc {
 		}
 		ext.Component.Set(sp, componentName)
 		c.Request = c.Request.WithContext(
-			opentracing.ContextWithSpan(c.Request.Context(), sp))
+			opentracing.ContextWithSpan(c, sp))
 
 		c.Next()
 
